@@ -15,14 +15,14 @@ module Datadoge
 
       ActiveSupport::Notifications.subscribe /process_action.action_controller/ do |*args|
         event = ActiveSupport::Notifications::Event.new(*args)
-        controller = "#{event.payload[:controller]}"
-        action = "#{event.payload[:action]}"
-        path = "#{controller}/#{action}"
+        controller = "controller:#{event.payload[:controller]}"
+        action = "action:#{event.payload[:action]}"
+        path = "path:#{event.payload[:controller]}/#{event.payload[:action]}"
         format = "format:#{event.payload[:format] || 'all'}"
         format = "format:all" if format == "format:*/*"
         host = "host:#{ENV['INSTRUMENTATION_HOSTNAME'] || Rails.application.class.parent_name}"
         status = event.payload[:status]
-        tags = [path, "action:#{action}", "controller:#{controller}", format, host]
+        tags = [path, action, controller, format, host]
         ActiveSupport::Notifications.instrument :performance, :action => :timing, :tags => tags, :measurement => "request.total_duration", :value => event.duration
         ActiveSupport::Notifications.instrument :performance, :action => :timing, :tags => tags,  :measurement => "database.query.time", :value => event.payload[:db_runtime]
         ActiveSupport::Notifications.instrument :performance, :action => :timing, :tags => tags,  :measurement => "web.view.time", :value => event.payload[:view_runtime]
