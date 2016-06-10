@@ -17,7 +17,7 @@ module Datadoge
         event = ActiveSupport::Notifications::Event.new(*args)
         controller = "#{event.payload[:controller]}"
         action = "#{event.payload[:action]}"
-        path = "path:#{action}##{controller}"
+        path = "#{controller}/#{action}"
         format = "format:#{event.payload[:format] || 'all'}"
         format = "format:all" if format == "format:*/*"
         host = "host:#{ENV['INSTRUMENTATION_HOSTNAME'] || Rails.application.class.parent_name}"
