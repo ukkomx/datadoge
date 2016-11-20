@@ -7,13 +7,17 @@ module Datadoge
 
   with_configuration do
     has :environments, classes: Array, default: ['production']
+    has :host, classes: String, default: '127.0.0.1'
+    has :port, classes: Integer, default: 8125
   end
 
   class Railtie < Rails::Railtie
-    initializer "datadoge.configure_rails_initialization" do |app|
-      $statsd = Datadog::Statsd.new
+    initializer 'datadoge.configure_rails_initialization' do |app|
+      host = Datadoge.configuration.host
+      port = Datadoge.configuration.port
+      $statsd = Datadog::Statsd.new host, port
 
-      ActiveSupport::Notifications.subscribe /process_action.action_controller/ do |*args|
+      ActiveSupport::Notifications.subscribe(/process_action.action_controller/) do |*args|
         event = ActiveSupport::Notifications::Event.new(*args)
         controller = "controller:#{event.payload[:controller]}"
         action = "action:#{event.payload[:action]}"
@@ -29,7 +33,7 @@ module Datadoge
         ActiveSupport::Notifications.instrument :performance, :tags => tags,  :measurement => "request.status.#{status}"
       end
 
-      ActiveSupport::Notifications.subscribe /performance/ do |name, start, finish, id, payload|
+      ActiveSupport::Notifications.subscribe(/performance/) do |name, start, finish, id, payload|
         send_event_to_statsd(name, payload) if Datadoge.configuration.environments.include?(Rails.env)
       end
 
