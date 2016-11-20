@@ -6,8 +6,8 @@ require 'datadoge/version'
 Gem::Specification.new do |spec|
   spec.name          = 'datadoge'
   spec.version       = Datadoge::VERSION
-  spec.authors       = ['Dave Lane']
-  spec.email         = ['dave.lane@metova.com']
+  spec.authors       = ['Dave Lane', 'Ricardo García']
+  spec.email         = ['dave.lane@metova.com', 'ricardo@ukko.mx']
   spec.summary       = 'A simple integration of Datadog to report on Rails application performance.'
   spec.description   = 'This gem is notified of basic performance metrics for a Rails application, and sends the measurements to Datadog.'
   spec.homepage      = ''
