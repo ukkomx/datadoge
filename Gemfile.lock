@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     datadoge (0.0.3)
-      dogstatsd-ruby (> 0)
+      dogstatsd-ruby (~> 2.1)
       gem_config (~> 0)
 
 GEM
